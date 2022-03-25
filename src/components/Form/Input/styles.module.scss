@@ -1,0 +1,19 @@
+.inputGroup {
+  width: 100%;
+
+  input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid transparent;
+    border-radius: var(--border-radius-1x);
+    background-color: rgb(248, 248, 248);      
+    
+    outline: transparent;
+    transition: background ease-in 0.2s;
+    
+    &:focus, &:hover {
+      transition: background ease-in 0.2s;      
+      border: 2px solid var(--color-primary)
+    }
+  }
+}

@@ -1,0 +1,25 @@
+.todoGroup {
+  .todoItem {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+
+    gap: 8px;
+    min-height: 50px;
+    padding: 8px;
+    padding-inline: 12px;
+    border-radius: var(--border-radius-1x);
+    cursor: pointer;
+
+    transition: all ease-in 0.2s;
+    background: rgb(235, 235, 235); 
+
+    &:hover {
+      background: rgb(225, 225, 225); 
+    }
+
+    &.done {
+      background: var(--color-secondary-100); 
+    }
+  }
+}

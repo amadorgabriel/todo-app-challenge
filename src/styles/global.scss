@@ -1,0 +1,25 @@
+@import url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,900&display=swap");
+@import url('./utils.css');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --color-white: #f1f1f1;
+  --color-primary: #F45B69;
+  --color-primary-800: #e4535f;
+  --color-secondary: #95E06C;
+  --color-secondary-100: #cef0bc;
+  --color-secondary-800: #84c760;
+  --color-gray: #c5c5c5;
+
+  --border-radius-1x: 6px; 
+}
+
+body {
+  background-color: var(--color-white);
+  font-family: 'Lato', sans-serif;
+}

@@ -1,0 +1,89 @@
+/* -------- SPACING */
+
+/* Margins */
+
+.mb-1 {
+  margin-block-end: 4px !important;
+}
+
+.mb-2 {
+  margin-block-end: 8px !important;
+}
+
+.mb-3 {
+  margin-block-end: 12px !important;
+}
+
+.mb-4 {
+  margin-block-end: 16px !important;
+}
+
+/* -------- DISPLAY */
+
+.d-flex {
+  display: flex !important;
+}
+
+.d-none {
+  display: none !important;
+}
+
+.align-items-center {
+  align-items: center !important;
+}
+
+.justify-content-center {
+  justify-content: center !important;
+}
+
+.justify-content-end {
+  justify-content: end !important;
+}
+
+.justify-content-between {
+  justify-content: space-between !important;
+}
+
+.align-self-center {
+  align-self: center !important;
+}
+
+/* -------- Width & Height */
+
+.w-100 {
+  width: 100% !important;
+}
+
+.gap-1 {
+  gap: 4px !important;
+}
+
+.gap-2 {
+  gap: 8px !important;
+}
+
+.gap-3 {
+  gap: 12px !important;
+}
+
+.gap-4 {
+  gap: 16px !important;
+}
+
+
+/* -------- COLORS */
+
+.transparent {
+  background-color: transparent;
+  color: transparent;
+  border: transparent;
+  outline: transparent ;
+}
+
+
+/* -------- TIPOGRAFY */
+
+h2, h3, h4, h5 {
+  text-transform: uppercase;
+  color: rgb(77, 77, 77);
+}
