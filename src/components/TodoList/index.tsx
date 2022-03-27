@@ -19,10 +19,10 @@ export const TodoList = ({}) => {
   const [taskTitle, setTaskTitle] = useState<string>("");
 
   const [isMultiSelecting, setIsMultiSelecting] = useState<boolean>(false);
-  
+
   function handleAddNewItem(taskTitle: string) {
     if (!taskTitle.replace(/\s/g, "").length) {
-      toast.warn("Você precisa escrever algo!");
+      toast.warn("You need to write something.");
       return;
     }
 
@@ -31,7 +31,7 @@ export const TodoList = ({}) => {
     });
 
     if (!!duplicatedTask[0]) {
-      toast.warn("Já existe uma task com esse nome!");
+      toast.warn("A task with that name already exists.");
       return;
     }
 
@@ -71,11 +71,11 @@ export const TodoList = ({}) => {
     });
 
     const deletItem = confirm(
-      `Você tem certeza que deseja exluir o item? \n ${taskTobeDeleted.title}`
+      `Are you sure you want to delete the item: \n ${taskTobeDeleted.title}?`
     );
 
     if (deletItem) {
-      toast.success("Excluido com sucesso!");
+      toast.success("Successfully deleted!");
       setTodoItems([...filteredTasks]);
     }
   }
@@ -95,18 +95,36 @@ export const TodoList = ({}) => {
     setTodoItems([...updatedTasks]);
   }
 
-  function handleToggleSelectAllItems() {
+  function handleSelectAllItems() {
     if (todoItems.length === 0) {
-      toast.warn("Você ainda não tem nenhuma task");
+      toast.warn("You don't have any tasks yet");
       return;
     }
 
-    setIsMultiSelecting(!isMultiSelecting);
+    setIsMultiSelecting(true);
 
     const selectedItems: TodoItem[] = todoItems.map((item) => {
       return {
         ...item,
-        isSelected: !isMultiSelecting,
+        isSelected: true,
+      };
+    });
+
+    setTodoItems([...selectedItems]);
+  }
+
+  function handleUnselectAllItems() {
+    if (todoItems.length === 0) {
+      toast.warn("You don't have any tasks yet");
+      return;
+    }
+
+    setIsMultiSelecting(false);
+
+    const selectedItems: TodoItem[] = todoItems.map((item) => {
+      return {
+        ...item,
+        isSelected: false,
       };
     });
 
@@ -122,10 +140,15 @@ export const TodoList = ({}) => {
       tasksTobeDeleted.push(item);
     });
 
+    if (tasksTobeDeleted.length === 0) {
+      toast.warn("You need to select some task");
+      return;
+    }
+
     const confirmRemoves = confirm(
-      `Você tem certeza que deseja exluir os seguintes items? \n ${tasksTobeDeleted.map(
-        (item) => `${item.title} \n`
-      )}`
+      `Are you sure you want to exclude the following items: ${tasksTobeDeleted.map(
+        (item) => `${item.title} `
+      )}?`
     );
 
     if (confirmRemoves) {
@@ -134,7 +157,16 @@ export const TodoList = ({}) => {
     }
   }
 
-  function handleUpdateStatusOfAllSelectedItems() {
+  function handleCompleteAllSelectedItems() {
+    const itemsSelected = todoItems.filter((item) => item.isSelected);
+
+    console.log(itemsSelected)
+    
+    if (itemsSelected.length === 0) {
+      toast.warn("You need to select some task");
+      return;
+    }
+
     const updatedTasks: TodoItem[] = todoItems.map((item) => {
       if (item.isSelected) {
         return {
@@ -156,6 +188,9 @@ export const TodoList = ({}) => {
           placeholder="Write a new Task"
           value={taskTitle}
           onChange={(event) => setTaskTitle(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key === "Enter") handleAddNewItem(taskTitle);
+          }}
         />
         <Button className="gap-2" onClick={() => handleAddNewItem(taskTitle)}>
           <FiPlus size={16} />
@@ -166,7 +201,7 @@ export const TodoList = ({}) => {
         <h5 className="mb-2">Filters</h5>
         <div className="d-flex gap-4">
           <Button size="sm" variant="outlined">
-            On Progress
+            In Progress
           </Button>
           <Button size="sm" variant="outlined">
             Done
@@ -176,8 +211,8 @@ export const TodoList = ({}) => {
 
       <div>
         <h5 className="mb-2">Multi Select</h5>
-        <div className="d-flex gap-4 mb-0">
-          <Button size="sm" variant="link" onClick={handleToggleSelectAllItems}>
+        <div className="d-flex gap-2 mb-0 pb-3 overflox-x-auto">
+          <Button size="sm" variant="link" onClick={handleSelectAllItems}>
             Select all
           </Button>
 
@@ -186,21 +221,21 @@ export const TodoList = ({}) => {
               <Button
                 size="sm"
                 variant="link"
-                onClick={handleToggleSelectAllItems}
+                onClick={handleUnselectAllItems}
               >
                 Unselect all
               </Button>
               <Button
                 size="sm"
                 variant="outlined"
-                onClick={() => handleRemoveAllSelectedItems()}
+                onClick={handleRemoveAllSelectedItems}
               >
                 Remove selected
               </Button>
               <Button
                 size="sm"
                 variant="outlined"
-                onClick={handleUpdateStatusOfAllSelectedItems}
+                onClick={handleCompleteAllSelectedItems}
               >
                 Complete selected
               </Button>
@@ -211,12 +246,9 @@ export const TodoList = ({}) => {
 
       <div className="mb-4">
         <div className="d-flex justify-content-end">
-          <Button size="sm">
-            Clear Filters
-          </Button>
+          <Button size="sm">Clear Filters</Button>
         </div>
       </div>
-
 
       <div className={styles.todoGroup}>
         {todoItems.length === 0 ? (
