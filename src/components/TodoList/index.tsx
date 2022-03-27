@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FiPlus } from "react-icons/fi";
 import { toast } from "react-toastify";
 
@@ -6,6 +6,7 @@ import { Button, Input } from "../Form";
 import { TodoItem } from "./TodoItem";
 
 import styles from "./styles.module.scss";
+import { ProgressBar } from "../ProgressBar";
 
 interface TodoItem {
   id: number;
@@ -16,9 +17,35 @@ interface TodoItem {
 
 export const TodoList = ({}) => {
   const [todoItems, setTodoItems] = useState<TodoItem[]>([]);
+  const [filteredTodoItems, setFilteredTodoItems] =
+    useState<TodoItem[]>(todoItems);
   const [taskTitle, setTaskTitle] = useState<string>("");
-
   const [isMultiSelecting, setIsMultiSelecting] = useState<boolean>(false);
+  const [filter, setFilter] = useState<"all" | "progress" | "done">("all");
+
+  const totalTasksCompleted = todoItems.filter(
+    (item) => item.status === "done"
+  ).length;
+  const totalTasksSelected = todoItems.filter((item) => item.isSelected).length;
+
+  // Handle task status filters
+  useEffect(() => {
+    if (filter === "all") setFilteredTodoItems(todoItems);
+
+    if (filter === "done") {
+      setFilteredTodoItems(todoItems.filter((item) => item.status === "done"));
+    }
+
+    if (filter === "progress") {
+      setFilteredTodoItems(todoItems.filter((item) => item.status === "progress"));
+    }
+  }, [todoItems, filter]);
+
+  // Handle isMultiSelecting state
+  useEffect(() => {
+    if (totalTasksSelected > 1) setIsMultiSelecting(true);
+    if (totalTasksSelected === 0) setIsMultiSelecting(false);
+  }, [totalTasksSelected]);
 
   function handleAddNewItem(taskTitle: string) {
     if (!taskTitle.replace(/\s/g, "").length) {
@@ -35,10 +62,17 @@ export const TodoList = ({}) => {
       return;
     }
 
+    const itemId = Math.floor(Math.random() * 100);
+
+    todoItems.forEach((item) => {
+      if (item.id === itemId) handleAddNewItem(taskTitle);
+      return;
+    });
+
     setTodoItems([
       ...todoItems,
       {
-        id: Math.floor(Math.random() * 100),
+        id: itemId,
         title: taskTitle,
         status: "progress",
         isSelected: false,
@@ -160,8 +194,8 @@ export const TodoList = ({}) => {
   function handleCompleteAllSelectedItems() {
     const itemsSelected = todoItems.filter((item) => item.isSelected);
 
-    console.log(itemsSelected)
-    
+    console.log(itemsSelected);
+
     if (itemsSelected.length === 0) {
       toast.warn("You need to select some task");
       return;
@@ -197,13 +231,29 @@ export const TodoList = ({}) => {
           Add New
         </Button>
       </div>
+
+      <div className="mb-2">
+        <ProgressBar value={totalTasksCompleted} max={todoItems.length} />
+      </div>
+
       <div className="mb-2">
         <h5 className="mb-2">Filters</h5>
-        <div className="d-flex gap-4">
-          <Button size="sm" variant="outlined">
+        <div className="d-flex gap-2">
+          <Button size="sm" variant="outlined" onClick={() => setFilter("all")}>
+            All
+          </Button>
+          <Button
+            size="sm"
+            variant="outlined"
+            onClick={() => setFilter("progress")}
+          >
             In Progress
           </Button>
-          <Button size="sm" variant="outlined">
+          <Button
+            size="sm"
+            variant="outlined"
+            onClick={() => setFilter("done")}
+          >
             Done
           </Button>
         </div>
@@ -218,11 +268,7 @@ export const TodoList = ({}) => {
 
           {isMultiSelecting && todoItems.length !== 0 && (
             <>
-              <Button
-                size="sm"
-                variant="link"
-                onClick={handleUnselectAllItems}
-              >
+              <Button size="sm" variant="link" onClick={handleUnselectAllItems}>
                 Unselect all
               </Button>
               <Button
@@ -251,24 +297,25 @@ export const TodoList = ({}) => {
       </div>
 
       <div className={styles.todoGroup}>
-        {todoItems.length === 0 ? (
-          <p>Add some tasks clicking on 'Add New' button. </p>
+        {todoItems.length === 0 || filteredTodoItems.length === 0 ? (
+          <p>There are no tasks. </p>
         ) : (
-          todoItems.map((item, index) => (
-            <>
-              <TodoItem
-                key={index}
-                title={item.title}
-                status={item.status}
-                isSelected={item.isSelected}
-                isMultiSelecting={isMultiSelecting}
-                onSelect={() => hanldleToggleSelectItem(item.id)}
-                onRemove={() => handleDeleteItem(item.id)}
-                onComplete={() => hanldleToggleStatusItem(item.id)}
-              />
-              <hr className="transparent mb-2" />
-            </>
-          ))
+          filteredTodoItems.map((item, index) => {
+            return (
+              <>
+                <TodoItem
+                  key={index}
+                  title={item.title}
+                  status={item.status}
+                  isSelected={item.isSelected}
+                  onSelect={() => hanldleToggleSelectItem(item.id)}
+                  onRemove={() => handleDeleteItem(item.id)}
+                  onComplete={() => hanldleToggleStatusItem(item.id)}
+                />
+                <hr className="transparent mb-2" />
+              </>
+            );
+          })
         )}
       </div>
     </>

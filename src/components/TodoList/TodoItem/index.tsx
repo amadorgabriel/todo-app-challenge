@@ -10,8 +10,6 @@ interface TodoItemProps {
   status: "progress" | "done";
   isSelected: boolean;
 
-  isMultiSelecting?: boolean;
-
   onSelect: () => void;
   onRemove: () => void;
   onComplete: () => void;
@@ -21,16 +19,13 @@ export const TodoItem = ({
   title,
   status,
   isSelected,
-  isMultiSelecting = false,
   onSelect,
   onRemove,
   onComplete,
 }: TodoItemProps) => {
   return (
     <div className={`${styles.todoItem} ${styles[status]}`}>
-      {isMultiSelecting && (
-        <CheckBox checked={isSelected} onChange={onSelect} />
-      )}
+      <CheckBox checked={isSelected} onChange={onSelect} />
 
       <div className="d-flex justify-content-between w-100">
         <p className="align-self-center">{title}</p>
