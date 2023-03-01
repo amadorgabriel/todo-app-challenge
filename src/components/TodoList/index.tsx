@@ -16,7 +16,7 @@ interface TodoItem {
 }
 
 export const TodoList = ({}) => {
-  const [todoItems, setTodoItems] = useState<TodoItem[]>([]);
+  const [todoItems, setTodoItems] = useState<TodoItem[]>(() => JSON.parse(localStorage.getItem('tasks_tasklist') ?? '') );
   const [filteredTodoItems, setFilteredTodoItems] =
     useState<TodoItem[]>(todoItems);
   const [taskTitle, setTaskTitle] = useState<string>("");
@@ -28,6 +28,10 @@ export const TodoList = ({}) => {
   ).length;
   const totalTasksSelected = todoItems.filter((item) => item.isSelected).length;
 
+  useEffect(() => {
+    localStorage.setItem('tasks_tasklist', JSON.stringify(todoItems))
+  }, [todoItems]);
+
   // Handle task status filters
   useEffect(() => {
     if (filter === "all") setFilteredTodoItems(todoItems);
@@ -37,7 +41,9 @@ export const TodoList = ({}) => {
     }
 
     if (filter === "progress") {
-      setFilteredTodoItems(todoItems.filter((item) => item.status === "progress"));
+      setFilteredTodoItems(
+        todoItems.filter((item) => item.status === "progress")
+      );
     }
   }, [todoItems, filter]);
 
@@ -47,7 +53,7 @@ export const TodoList = ({}) => {
     if (totalTasksSelected === 0) setIsMultiSelecting(false);
   }, [totalTasksSelected]);
 
-  function handleAddNewItem(taskTitle: string) {
+  function handleAddItem(taskTitle: string) {
     if (!taskTitle.replace(/\s/g, "").length) {
       toast.warn("You need to write something.");
       return;
@@ -65,7 +71,7 @@ export const TodoList = ({}) => {
     const itemId = Math.floor(Math.random() * 100);
 
     todoItems.forEach((item) => {
-      if (item.id === itemId) handleAddNewItem(taskTitle);
+      if (item.id === itemId) handleAddItem(taskTitle);
       return;
     });
 
@@ -223,10 +229,10 @@ export const TodoList = ({}) => {
           value={taskTitle}
           onChange={(event) => setTaskTitle(event.target.value)}
           onKeyDown={(event) => {
-            if (event.key === "Enter") handleAddNewItem(taskTitle);
+            if (event.key === "Enter") handleAddItem(taskTitle);
           }}
         />
-        <Button className="gap-2" onClick={() => handleAddNewItem(taskTitle)}>
+        <Button className="gap-2" onClick={() => handleAddItem(taskTitle)}>
           <FiPlus size={16} />
           Add New
         </Button>
